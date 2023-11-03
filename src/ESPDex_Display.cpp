@@ -481,7 +481,9 @@ void Display::ui_main()
   lv_obj_set_x(ui_btn_next_page, -20);
   lv_obj_set_y(ui_btn_next_page, -10);
   lv_obj_set_align(ui_btn_next_page, LV_ALIGN_BOTTOM_RIGHT);
-  lv_obj_add_event_cb(ui_btn_next_page, ui_event_callback_thunk, LV_EVENT_CLICKED, NULL);
+  lv_obj_add_event_cb(ui_btn_next_page, ui_event_callback_thunk, LV_EVENT_SHORT_CLICKED, NULL);
+  lv_obj_add_event_cb(ui_btn_next_page, ui_event_callback_thunk, LV_EVENT_LONG_PRESSED, NULL);
+  lv_obj_add_event_cb(ui_btn_next_page, ui_event_callback_thunk, LV_EVENT_LONG_PRESSED_REPEAT, NULL);
 
   lv_obj_t *ui_btn_next_label = lv_label_create(ui_btn_next_page);
   lv_obj_set_width(ui_btn_next_label, LV_SIZE_CONTENT);
@@ -496,7 +498,9 @@ void Display::ui_main()
   lv_obj_set_width(ui_btn_prev_page, 90);
   lv_obj_set_height(ui_btn_prev_page, 40);
   lv_obj_set_align(ui_btn_prev_page, LV_ALIGN_BOTTOM_RIGHT);
-  lv_obj_add_event_cb(ui_btn_prev_page, ui_event_callback_thunk, LV_EVENT_CLICKED, NULL);
+  lv_obj_add_event_cb(ui_btn_prev_page, ui_event_callback_thunk, LV_EVENT_SHORT_CLICKED, NULL);
+  lv_obj_add_event_cb(ui_btn_prev_page, ui_event_callback_thunk, LV_EVENT_LONG_PRESSED, NULL);
+  lv_obj_add_event_cb(ui_btn_prev_page, ui_event_callback_thunk, LV_EVENT_LONG_PRESSED_REPEAT, NULL);
 
   lv_obj_t *ui_btn_prev_label = lv_label_create(ui_btn_prev_page);
   lv_obj_set_width(ui_btn_prev_label, LV_SIZE_CONTENT);
@@ -990,14 +994,8 @@ void Display::ui_event_callback(lv_event_t *e)
   log_i("Event code: %d", event_code);
   log_i("target: %p", target);
 
-  if (event_code == LV_EVENT_CLICKED)
-  {
-    if (target == ui_BasePopupCloseBtn)
-    {
-      lv_obj_add_flag(ui_BasePopup, LV_OBJ_FLAG_HIDDEN);
-      lv_obj_move_background(ui_BasePopup);
-    }
-    else if (target == ui_btn_next_page)
+  if (event_code == LV_EVENT_SHORT_CLICKED) {
+    if (target == ui_btn_next_page)
     {
       page++;
       if (page >= n_pages)
@@ -1018,6 +1016,39 @@ void Display::ui_event_callback(lv_event_t *e)
       }
       lv_label_set_text_fmt(ui_page_label, "%03d / %03d", page + 1, n_pages);
       update_pkm_list();
+    }
+  }
+  if (event_code == LV_EVENT_LONG_PRESSED || event_code == LV_EVENT_LONG_PRESSED_REPEAT) {
+    if (target == ui_btn_next_page)
+    {
+      page += 5;
+      if (page >= n_pages)
+      {
+        page = n_pages - 1;
+        return;
+      }
+      lv_label_set_text_fmt(ui_page_label, "%03d / %03d", page + 1, n_pages);
+      update_pkm_list();
+    }
+    else if (target == ui_btn_prev_page)
+    {
+      page -= 5;
+      if (page < 0)
+      {
+        page = 0;
+        return;
+      }
+      lv_label_set_text_fmt(ui_page_label, "%03d / %03d", page + 1, n_pages);
+      update_pkm_list();
+    }
+  }
+
+  if (event_code == LV_EVENT_CLICKED)
+  {
+    if (target == ui_BasePopupCloseBtn)
+    {
+      lv_obj_add_flag(ui_BasePopup, LV_OBJ_FLAG_HIDDEN);
+      lv_obj_move_background(ui_BasePopup);
     }
     else if (target == ui_TopPanel)
     {
