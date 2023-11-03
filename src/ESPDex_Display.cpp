@@ -1025,7 +1025,6 @@ void Display::ui_event_callback(lv_event_t *e)
       if (page >= n_pages)
       {
         page = n_pages - 1;
-        return;
       }
       lv_label_set_text_fmt(ui_page_label, "%03d / %03d", page + 1, n_pages);
       update_pkm_list();
@@ -1036,7 +1035,6 @@ void Display::ui_event_callback(lv_event_t *e)
       if (page < 0)
       {
         page = 0;
-        return;
       }
       lv_label_set_text_fmt(ui_page_label, "%03d / %03d", page + 1, n_pages);
       update_pkm_list();
