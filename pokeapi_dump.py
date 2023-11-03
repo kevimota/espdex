@@ -7,7 +7,7 @@ from PIL import Image
 from pprint import pprint
 
 pokeapi_url = "http://localhost:8000/api/v2"
-out_folder = "data"
+out_folder = "sd_data"
 
 pkm_list = []
 
@@ -130,7 +130,7 @@ if __name__ == "__main__":
             desc = get_desc(pkm_specie)
             if '\u2014' in desc:
                 print(desc)
-                desc = desc.replace('\u2014', ' -')
+                desc = desc.replace('\u2014', ' - ')
             if '\u2019' in desc:
                 print(desc)
                 desc = desc.replace('\u2019', "\'")
@@ -172,8 +172,8 @@ if __name__ == "__main__":
             json.dump(pkm_list, f)
 
     if args.copy:
-        with open("data/pkm_list.json", 'r') as f:
+        with open(f"{out_folder}/pkm_list.json", 'r') as f:
             pkm_list = json.load(f)
         
         for p in pkm_list:
-            os.system(f'mv /Users/kevimota/Downloads/"{p}.bin" data/sprites/.')
+            os.system(f'mv /Users/kevimota/Downloads/"{p}.bin" {out_folder}/sprites/.')
